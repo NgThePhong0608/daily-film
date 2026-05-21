@@ -5,8 +5,8 @@ import { ArrowUpRight, Sparkles, X } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 
-const AFFILIATE_URL = "https://affiliate-hub.top/";
-const SESSION_STORAGE_KEY = "daily-film:affiliate-banner-dismissed";
+const AFFILIATE_URL = "https://gild.website";
+const SESSION_STORAGE_KEY = "daily-film:gild-banner-dismissed";
 const subscribe = () => () => {};
 
 export default function AffiliateBanner() {
@@ -48,7 +48,7 @@ export default function AffiliateBanner() {
               onClick={handleOpenAffiliate}
               onKeyDown={handleKeyDown}
               className="group flex min-w-0 flex-1 cursor-pointer items-center gap-2 rounded-xl outline-none transition-colors hover:bg-emerald-500/5 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background sm:gap-3"
-              aria-label="Mở trang AffiliateHub"
+              aria-label="Mở trang Gild"
             >
               <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 sm:h-9 sm:w-9">
                 <Sparkles className="h-4 w-4" />
@@ -56,14 +56,14 @@ export default function AffiliateBanner() {
               <div className="min-w-0">
                 <div className="flex items-center gap-2">
                   <span className="inline-flex items-center rounded-full border border-emerald-500/20 bg-emerald-500/8 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.16em] text-emerald-700 dark:text-emerald-300">
-                    AffiliateHub
+                    Gild
                   </span>
                   <span className="hidden text-xs font-medium text-muted-foreground sm:inline">
                     Shopee + TikTok orders
                   </span>
                 </div>
                 <p className="mt-0.5 line-clamp-1 text-xs font-medium leading-4 text-foreground sm:text-sm">
-                  Nhận tiền từ đơn hàng Shopee và TikTok, theo dõi thu nhập nhanh.
+                  Nhận tiền free từ đơn hàng Shopee và TikTok của chính mình.
                 </p>
               </div>
             </div>
@@ -84,7 +84,7 @@ export default function AffiliateBanner() {
                 variant="ghost"
                 size="icon-sm"
                 className="rounded-full text-muted-foreground hover:bg-accent hover:text-foreground"
-                aria-label="Đóng quảng cáo AffiliateHub"
+                aria-label="Đóng quảng cáo Gild"
                 onClick={handleDismiss}
               >
                 <X className="h-4 w-4" />
