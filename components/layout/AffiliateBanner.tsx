@@ -40,22 +40,22 @@ export default function AffiliateBanner() {
   return (
     <div className="fixed inset-x-0 bottom-2 z-40">
       <div className="container">
-        <div className="rounded-2xl border border-emerald-500/15 bg-background/95 px-3 py-2.5 shadow-lg backdrop-blur sm:px-4 sm:py-3">
+        <div className="rounded-2xl border border-blue-500/15 bg-background/95 px-3 py-2.5 shadow-lg backdrop-blur sm:px-4 sm:py-3">
           <div className="flex items-center gap-2 sm:gap-3">
             <div
               role="link"
               tabIndex={0}
               onClick={handleOpenAffiliate}
               onKeyDown={handleKeyDown}
-              className="group flex min-w-0 flex-1 cursor-pointer items-center gap-2 rounded-xl outline-none transition-colors hover:bg-emerald-500/5 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background sm:gap-3"
+              className="group flex min-w-0 flex-1 cursor-pointer items-center gap-2 rounded-xl outline-none transition-colors hover:bg-blue-500/5 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background sm:gap-3"
               aria-label="Mở trang Gild"
             >
-              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 sm:h-9 sm:w-9">
+              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-blue-500/10 text-blue-600 dark:text-blue-400 sm:h-9 sm:w-9">
                 <Sparkles className="h-4 w-4" />
               </div>
               <div className="min-w-0">
                 <div className="flex items-center gap-2">
-                  <span className="inline-flex items-center rounded-full border border-emerald-500/20 bg-emerald-500/8 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.16em] text-emerald-700 dark:text-emerald-300">
+                  <span className="inline-flex items-center rounded-full border border-blue-500/20 bg-blue-500/8 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.16em] text-blue-700 dark:text-blue-300">
                     Gild
                   </span>
                   <span className="hidden text-xs font-medium text-muted-foreground sm:inline">
@@ -73,7 +73,7 @@ export default function AffiliateBanner() {
                 type="button"
                 onClick={handleOpenAffiliate}
                 size="sm"
-                className="rounded-full bg-emerald-600 px-3 text-white hover:bg-emerald-500"
+                className="rounded-full bg-blue-600 px-3 text-white hover:bg-blue-500"
               >
                 Xem ngay
                 <ArrowUpRight className="h-4 w-4" />
