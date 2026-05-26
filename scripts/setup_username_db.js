@@ -19,6 +19,8 @@ async function main() {
     // Drop existing tables
     await db.execute("DROP TABLE IF EXISTS favorites");
     await db.execute("DROP TABLE IF EXISTS follows");
+    await db.execute("DROP TABLE IF EXISTS playlist_items");
+    await db.execute("DROP TABLE IF EXISTS playlists");
     await db.execute("DROP TABLE IF EXISTS watch_progress");
     await db.execute("DROP TABLE IF EXISTS users");
     console.log("✅ Dropped old tables");
@@ -56,6 +58,40 @@ async function main() {
       );
     `);
     console.log("✅ Created table: follows");
+
+    // Playlists
+    await db.execute(`
+      CREATE TABLE playlists (
+        id TEXT PRIMARY KEY,
+        user_id TEXT NOT NULL,
+        name TEXT NOT NULL,
+        created_at INTEGER NOT NULL,
+        updated_at INTEGER NOT NULL
+      );
+    `);
+    console.log("✅ Created table: playlists");
+
+    await db.execute(`
+      CREATE TABLE playlist_items (
+        id TEXT PRIMARY KEY,
+        playlist_id TEXT NOT NULL,
+        movie_slug TEXT NOT NULL,
+        created_at INTEGER NOT NULL,
+        UNIQUE(playlist_id, movie_slug)
+      );
+    `);
+    console.log("✅ Created table: playlist_items");
+
+    await db.execute(`
+      CREATE INDEX idx_playlists_user_updated
+      ON playlists(user_id, updated_at DESC);
+    `);
+
+    await db.execute(`
+      CREATE INDEX idx_playlist_items_playlist_created
+      ON playlist_items(playlist_id, created_at DESC);
+    `);
+    console.log("✅ Created playlist indexes");
 
     // Watch Progress
     await db.execute(`

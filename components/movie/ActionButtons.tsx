@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Heart, Bell, Loader2 } from "lucide-react";
 import { toggleFavorite, toggleFollow, getUserStats } from "@/app/actions/user";
 import { cn } from "@/lib/utils";
+import PlaylistPickerButton from "@/components/playlists/PlaylistPickerButton";
 
 interface ActionButtonsProps {
   movieSlug: string;
@@ -66,7 +67,10 @@ export default function ActionButtons({
 
   if (isLoading) {
     return (
-      <div className="flex gap-2">
+      <div className="flex flex-wrap gap-2">
+        <Button variant="outline" size="sm" disabled>
+          <Loader2 className="h-4 w-4 animate-spin" />
+        </Button>
         <Button variant="outline" size="sm" disabled>
           <Loader2 className="h-4 w-4 animate-spin" />
         </Button>
@@ -78,7 +82,7 @@ export default function ActionButtons({
   }
 
   return (
-    <div className="flex gap-2">
+    <div className="flex flex-wrap gap-2">
       <Button
         variant={isFavorite ? "secondary" : "outline"}
         size="sm"
@@ -106,6 +110,8 @@ export default function ActionButtons({
         <Bell className={cn("h-4 w-4", isFollowed && "fill-current")} />
         {isFollowed ? "Đang theo dõi" : "Theo dõi"}
       </Button>
+
+      <PlaylistPickerButton movieSlug={movieSlug} />
     </div>
   );
 }

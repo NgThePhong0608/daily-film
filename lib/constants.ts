@@ -18,7 +18,6 @@ export const MOVIE_CATEGORY_SLUGS = [
   "bi-an",
   "hoc-duong",
   "gia-dinh",
-  // "hoat-hinh", // Removed as it returns empty
   "am-nhac",
 ] as const;
 

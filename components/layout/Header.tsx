@@ -85,6 +85,13 @@ export default function Header() {
                       >
                         Theo Dõi
                       </Link>
+                      <Link
+                        href="/playlists"
+                        onClick={() => setOpen(false)}
+                        className="text-sm hover:text-primary text-muted-foreground hover:underline flex items-center gap-2"
+                      >
+                        Playlist
+                      </Link>
                     </div>
                   </div>
 
@@ -189,6 +196,12 @@ export default function Header() {
             className="transition-colors hover:text-foreground/80 text-foreground/60"
           >
             Theo Dõi
+          </Link>
+          <Link
+            href="/playlists"
+            className="transition-colors hover:text-foreground/80 text-foreground/60"
+          >
+            Playlist
           </Link>
         </div>
 
