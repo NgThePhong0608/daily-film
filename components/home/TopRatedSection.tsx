@@ -27,11 +27,15 @@ export default async function TopRatedSection() {
             >
               <div className="relative aspect-[2/3] rounded-lg overflow-hidden bg-muted mb-3">
                 <RemoteImage
-                  src={resolveOphimImageUrl(item.movieData.poster_url)}
+                  src={resolveOphimImageUrl(
+                    item.movieData.thumb_url || item.movieData.poster_url,
+                  )}
                   alt={item.movieData.name}
                   fill
+                  quality={90}
                   className="object-cover transition-transform duration-300 group-hover:scale-105"
                   sizes="(max-width: 768px) 160px, 200px"
+                  loading="lazy"
                 />
                 <div className="absolute top-2 right-2 bg-black/60 backdrop-blur-sm px-2 py-1 rounded-md flex items-center gap-1">
                   <Star className="w-3 h-3 text-yellow-500 fill-yellow-500" />
