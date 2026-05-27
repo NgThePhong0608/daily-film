@@ -13,13 +13,19 @@ export const MOVIE_CATEGORY_SLUGS = [
   "the-thao",
   "vo-thuat",
   "vien-tuong",
+  "phieu-luu",
+  "khoa-hoc",
   "kinh-di",
+  "am-nhac",
+  "than-thoai",
   "tai-lieu",
+  "gia-dinh",
+  "chinh-kich",
   "bi-an",
   "hoc-duong",
-  "gia-dinh",
-  // "hoat-hinh", // Removed as it returns empty
-  "am-nhac",
+  "kinh-dien",
+  "phim-18",
+  "short-drama",
 ] as const;
 
 /**
@@ -41,12 +47,19 @@ export const MOVIE_CATEGORY_LABELS: Record<MovieCategorySlug, string> = {
   "the-thao": "Thể Thao",
   "vo-thuat": "Võ Thuật",
   "vien-tuong": "Viễn Tưởng",
+  "phieu-luu": "Phiêu Lưu",
+  "khoa-hoc": "Khoa Học",
   "kinh-di": "Kinh Dị",
-  "tai-lieu": "Tài Liệu",
-  "bi-an": "Bí Ẩn",
-  "hoc-duong": "Học Đường",
-  "gia-dinh": "Gia Đình",
   "am-nhac": "Âm Nhạc",
+  "than-thoai": "Thần Thoại",
+  "tai-lieu": "Tài Liệu",
+  "gia-dinh": "Gia Đình",
+  "chinh-kich": "Chính kịch",
+  "bi-an": "Bí ẩn",
+  "hoc-duong": "Học Đường",
+  "kinh-dien": "Kinh Điển",
+  "phim-18": "Phim 18+",
+  "short-drama": "Short Drama",
 };
 
 /**
@@ -87,17 +100,40 @@ export const COUNTRY_SLUGS = [
   "anh",
   "phap",
   "canada",
+  "quoc-gia-khac",
   "duc",
   "tay-ban-nha",
   "tho-nhi-ky",
+  "ha-lan",
   "indonesia",
   "nga",
+  "mexico",
+  "ba-lan",
   "uc",
+  "thuy-dien",
   "malaysia",
+  "brazil",
   "philippines",
+  "bo-dao-nha",
+  "y",
+  "dan-mach",
+  "uae",
+  "na-uy",
+  "thuy-si",
+  "chau-phi",
+  "nam-phi",
+  "ukraina",
+  "a-rap-xe-ut",
+  "bi",
+  "ireland",
+  "colombia",
+  "phan-lan",
   "viet-nam",
+  "chile",
+  "hy-lap",
+  "nigeria",
+  "argentina",
   "singapore",
-  "quoc-gia-khac",
 ] as const;
 
 export type CountrySlug = (typeof COUNTRY_SLUGS)[number];
@@ -117,17 +153,40 @@ export const COUNTRY_LABELS: Record<CountrySlug, string> = {
   anh: "Anh",
   phap: "Pháp",
   canada: "Canada",
+  "quoc-gia-khac": "Quốc Gia Khác",
   duc: "Đức",
   "tay-ban-nha": "Tây Ban Nha",
   "tho-nhi-ky": "Thổ Nhĩ Kỳ",
+  "ha-lan": "Hà Lan",
   indonesia: "Indonesia",
   nga: "Nga",
+  mexico: "Mexico",
+  "ba-lan": "Ba lan",
   uc: "Úc",
+  "thuy-dien": "Thụy Điển",
   malaysia: "Malaysia",
+  brazil: "Brazil",
   philippines: "Philippines",
+  "bo-dao-nha": "Bồ Đào Nha",
+  y: "Ý",
+  "dan-mach": "Đan Mạch",
+  uae: "UAE",
+  "na-uy": "Na Uy",
+  "thuy-si": "Thụy Sĩ",
+  "chau-phi": "Châu Phi",
+  "nam-phi": "Nam Phi",
+  ukraina: "Ukraina",
+  "a-rap-xe-ut": "Ả Rập Xê Út",
+  bi: "Bỉ",
+  ireland: "Ireland",
+  colombia: "Colombia",
+  "phan-lan": "Phần Lan",
   "viet-nam": "Việt Nam",
+  chile: "Chile",
+  "hy-lap": "Hy Lạp",
+  nigeria: "Nigeria",
+  argentina: "Argentina",
   singapore: "Singapore",
-  "quoc-gia-khac": "Quốc Gia Khác",
 };
 
 export const LISTING_SORT_OPTIONS = [
@@ -139,6 +198,59 @@ export const LISTING_SORT_OPTIONS = [
 ] as const;
 
 export type ListingSortValue = (typeof LISTING_SORT_OPTIONS)[number]["value"];
+
+export const LIST_MOVIES_TYPE = [
+  {
+    value: "phim-moi",
+    label: "Phim Mới",
+  },
+  {
+    value: "phim-le",
+    label: "Phim Lẻ",
+  },
+  {
+    value: "phim-bo",
+    label: "Phim Bộ",
+  },
+  {
+    value: "phim-chieu-rap",
+    label: "Phim Chiếu Rạp",
+  },
+  {
+    value: "tv-shows",
+    label: "Shows",
+  },
+  {
+    value: "hoat-hinh",
+    label: "Hoạt Hình",
+  },
+  {
+    value: "phim-vietsub",
+    label: "Phim Vietsub",
+  },
+  {
+    value: "phim-thuyet-minh",
+    label: "Phim Thuyết Minh",
+  },
+  {
+    value: "phim-long-tien",
+    label: "Phim Lồng Tiếng",
+  },
+  {
+    value: "phim-bo-dang-chieu",
+    label: "Phim Bộ Đang Chiếu",
+  },
+  {
+    value: "phim-bo-hoan-thanh",
+    label: "Phim Bộ Hoàn Thành",
+  },
+  {
+    value: "phim-sap-chieu",
+    label: "Phim Sắp Chiếu",
+  }
+] as const;
+
+export type ListMoviesTypeValue = (typeof LIST_MOVIES_TYPE)[number];
 
 export function isValidListingSortValue(
   value: string,

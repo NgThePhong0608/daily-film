@@ -210,3 +210,40 @@ export async function getMoviesByCountry(slug: string, page = 1) {
     return { items: [], pagination: null };
   }
 }
+
+export async function getMoviesList(slug: string, page = 1) {
+  try {
+    const res = await fetchWithRetry(
+      `${OPHIM_BASE_URL}/v1/api/danh-sach/${slug}?page=${page}`,
+      {
+        ...FETCH_CONFIG,
+        next: { revalidate: MOVIE_LIST_REVALIDATE },
+      },
+    );
+
+    if (!res.ok) throw new Error("Failed to fetch movies by country");
+
+    const data = await res.json();
+    const items = data?.data?.items || [];
+    const apiPagination = data?.data?.params?.pagination;
+
+    const pagination = apiPagination
+      ? {
+          totalItems: apiPagination.totalItems,
+          totalItemsPerPage: apiPagination.totalItemsPerPage,
+          currentPage: apiPagination.currentPage,
+          totalPages: Math.ceil(
+            apiPagination.totalItems / apiPagination.totalItemsPerPage,
+          ),
+        }
+      : null;
+
+    return {
+      items: items as Movie[],
+      pagination,
+    };
+  } catch (error) {
+    console.error("getMoviesList error:", error);
+    return { items: [], pagination: null };
+  }
+}
