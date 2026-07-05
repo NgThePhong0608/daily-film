@@ -5,6 +5,7 @@ import { Metadata } from 'next';
 import RelatedMovies from "@/components/movie/RelatedMovies";
 import CustomPlayer from "@/components/movie/CustomPlayer";
 import CommentSection from "@/components/comments/CommentSection";
+import type { ServerData } from "@/types/movie";
 
 interface Props {
   params: Promise<{ slug: string; episode: string }>;
@@ -40,6 +41,8 @@ export default async function WatchPage(props: Props) {
   // For simplicity, find the episode in the first server that contains it.
 
   let currentEpisode = null;
+  let playerEpisodes: ServerData[] = [];
+  let previousEpisodeSlug = undefined;
   let nextEpisodeSlug = undefined;
 
   // Flatten search or check servers
@@ -47,6 +50,10 @@ export default async function WatchPage(props: Props) {
     const foundIndex = server.server_data.findIndex(e => e.slug === params.episode);
     if (foundIndex !== -1) {
       currentEpisode = server.server_data[foundIndex];
+      playerEpisodes = server.server_data;
+      if (foundIndex > 0) {
+        previousEpisodeSlug = server.server_data[foundIndex - 1].slug;
+      }
       // Check for next episode in the SAME server
       if (foundIndex + 1 < server.server_data.length) {
         nextEpisodeSlug = server.server_data[foundIndex + 1].slug;
@@ -74,6 +81,8 @@ export default async function WatchPage(props: Props) {
             posterUrl={movie.poster_url}
             episodeSlug={params.episode}
             episodeName={currentEpisode.name}
+            episodes={playerEpisodes}
+            previousEpisodeSlug={previousEpisodeSlug}
             nextEpisodeSlug={nextEpisodeSlug}
           />
 
