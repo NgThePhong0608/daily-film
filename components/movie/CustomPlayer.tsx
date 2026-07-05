@@ -210,7 +210,7 @@ export default function CustomPlayer(props: CustomPlayerProps) {
           )}
         </div>
 
-        <div className="absolute bottom-[5px] right-3 z-[2147483647] flex h-10 w-10 items-center justify-center bg-black/80">
+        <div className="absolute bottom-[5px] right-3 z-[2147483647] hidden h-10 w-10 items-center justify-center bg-black/80 md:flex">
           <Tooltip>
             <TooltipTrigger asChild>
               <Button
