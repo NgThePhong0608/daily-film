@@ -11,6 +11,8 @@ import { Metadata } from 'next';
 import CommentSection from "@/components/comments/CommentSection";
 import MovieRating from "@/components/movie/MovieRating";
 import RemoteImage from "@/components/shared/RemoteImage";
+import { Button } from "@/components/ui/button";
+import { Play } from "lucide-react";
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -37,6 +39,7 @@ export default async function MovieDetailPage(props: Props) {
   if (!data) return notFound();
 
   const { movie, episodes } = data;
+  const firstEpisode = episodes[0]?.server_data[0];
 
   // Clean content HTML potentially
   const content = movie.content.replace(/<p>&nbsp;<\/p>/g, '');
@@ -86,6 +89,21 @@ export default async function MovieDetailPage(props: Props) {
               <ActionButtons
                 movieSlug={movie.slug}
               />
+            </div>
+
+            <div>
+              {firstEpisode ? (
+                <Button asChild size="lg" className="gap-2">
+                  <Link href={`/xem-phim/${movie.slug}/${firstEpisode.slug}`}>
+                    <Play className="h-4 w-4 fill-current" />
+                    Xem phim
+                  </Link>
+                </Button>
+              ) : (
+                <Button size="lg" disabled>
+                  Chưa có nguồn phát
+                </Button>
+              )}
             </div>
 
             <MovieRating movieSlug={movie.slug} />

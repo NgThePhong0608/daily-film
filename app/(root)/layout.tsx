@@ -11,7 +11,7 @@ export default function Layout({
   return (
     <>
       <Header />
-      <AffiliateBanner />
+      {/* <AffiliateBanner /> */}
       <main className="flex-1">
         <UsernameGate>
           {children}

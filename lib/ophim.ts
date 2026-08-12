@@ -50,6 +50,23 @@ const FETCH_CONFIG = {
   timeout: 20000, // 20 seconds
 };
 
+function isPlayableEpisode(
+  episode: MovieDetail["episodes"][number]["server_data"][number],
+) {
+  return Boolean(
+    episode.slug?.trim() && (episode.link_m3u8?.trim() || episode.link_embed?.trim()),
+  );
+}
+
+function filterPlayableEpisodes(episodes: MovieDetail["episodes"]) {
+  return episodes
+    .map((server) => ({
+      ...server,
+      server_data: server.server_data.filter(isPlayableEpisode),
+    }))
+    .filter((server) => server.server_data.length > 0);
+}
+
 export async function getLatestMovies(page = 1) {
   try {
     const res = await fetchWithRetry(
@@ -89,7 +106,9 @@ export async function getMovieDetail(slug: string) {
     }
 
     const movie = data.movie as MovieDetail;
-    const episodes = (data.episodes || []) as MovieDetail["episodes"];
+    const episodes = filterPlayableEpisodes(
+      (data.episodes || []) as MovieDetail["episodes"],
+    );
 
     return {
       movie: { ...movie, episodes }, // Ensure episodes are attached to movie object

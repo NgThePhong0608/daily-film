@@ -1,14 +1,9 @@
 "use client";
 
-import React, { useEffect, useState, useRef, useCallback, useMemo } from "react";
+import React, { useEffect, useState, useRef, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { Maximize, Minimize, SkipBack, SkipForward } from "lucide-react";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+import { Server } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { logMovieEvent } from "@/app/actions/analytics";
 import { useWatchHistory } from "@/hooks/use-watch-history";
@@ -34,8 +29,13 @@ export default function CustomPlayer(props: CustomPlayerProps) {
   } = props;
   const router = useRouter();
   const containerRef = useRef<HTMLDivElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
   const [mounted, setMounted] = useState(false);
-  const [isFullscreen, setIsFullscreen] = useState(false);
+  const [useEmbedPlayer, setUseEmbedPlayer] = useState(false);
+  const [playerError, setPlayerError] = useState<{
+    url: string;
+    message: string;
+  } | null>(null);
   const [activeEpisode, setActiveEpisode] = useState<ServerData>(() => ({
     name: props.episodeName,
     slug: props.episodeSlug,
@@ -45,16 +45,6 @@ export default function CustomPlayer(props: CustomPlayerProps) {
   }));
 
   const { saveHistory } = useWatchHistory();
-  const episodes = useMemo(
-    () => props.episodes?.length ? props.episodes : [activeEpisode],
-    [activeEpisode, props.episodes]
-  );
-  const activeEpisodeIndex = episodes.findIndex((episode) => episode.slug === activeEpisode.slug);
-  const previousEpisode = activeEpisodeIndex > 0 ? episodes[activeEpisodeIndex - 1] : undefined;
-  const nextEpisode = activeEpisodeIndex >= 0 && activeEpisodeIndex + 1 < episodes.length
-    ? episodes[activeEpisodeIndex + 1]
-    : undefined;
-
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setMounted(true);
@@ -71,19 +61,8 @@ export default function CustomPlayer(props: CustomPlayerProps) {
       link_embed: props.embedUrl,
       link_m3u8: props.hlsUrl ?? "",
     });
+    setUseEmbedPlayer(false);
   }, [props.embedUrl, props.episodeName, props.episodeSlug, props.episodes, props.hlsUrl]);
-
-  useEffect(() => {
-    const onFullscreenChange = () => {
-      setIsFullscreen(!!document.fullscreenElement);
-    };
-
-    document.addEventListener("fullscreenchange", onFullscreenChange);
-
-    return () => {
-      document.removeEventListener("fullscreenchange", onFullscreenChange);
-    };
-  }, []);
 
   useEffect(() => {
     // 1. Save to Watch History immediately
@@ -111,45 +90,82 @@ export default function CustomPlayer(props: CustomPlayerProps) {
   }, [activeEpisode.name, activeEpisode.slug, movieSlug, props.movieTitle, props.posterUrl, saveHistory]);
 
   useEffect(() => {
-    if (!isFullscreen && activeEpisode.slug !== props.episodeSlug) {
+    if (activeEpisode.slug !== props.episodeSlug) {
       router.replace(`/xem-phim/${movieSlug}/${activeEpisode.slug}`);
     }
-  }, [activeEpisode.slug, isFullscreen, movieSlug, props.episodeSlug, router]);
+  }, [activeEpisode.slug, movieSlug, props.episodeSlug, router]);
 
-  const navigateToEpisode = useCallback((episode: ServerData | undefined) => {
-    if (!episode) return;
+  useEffect(() => {
+    const video = videoRef.current;
+    const hlsUrl = activeEpisode.link_m3u8?.trim();
 
-    const nextUrl = `/xem-phim/${movieSlug}/${episode.slug}`;
+    if (!mounted || !video || !hlsUrl || useEmbedPlayer) return;
 
-    if (isFullscreen) {
-      setActiveEpisode(episode);
-      window.history.pushState(null, "", nextUrl);
-      document.title = `Xem phim ${props.movieTitle} - Tập ${episode.name}`;
+    video.pause();
+    video.removeAttribute("src");
+    video.load();
+
+    if (video.canPlayType("application/vnd.apple.mpegurl")) {
+      video.src = hlsUrl;
       return;
     }
 
-    router.push(nextUrl);
-  }, [isFullscreen, movieSlug, props.movieTitle, router]);
+    let destroyed = false;
+    let hlsInstance: import("hls.js").default | null = null;
 
-  const handlePrevious = useCallback(() => {
-    navigateToEpisode(previousEpisode);
-  }, [navigateToEpisode, previousEpisode]);
+    import("hls.js")
+      .then(({ default: Hls }) => {
+        if (destroyed) return;
 
-  const handleNext = useCallback(() => {
-    navigateToEpisode(nextEpisode);
-  }, [navigateToEpisode, nextEpisode]);
+        if (!Hls.isSupported()) {
+          setPlayerError({
+            url: hlsUrl,
+            message: "Trình duyệt này không hỗ trợ phát video HLS.",
+          });
+          return;
+        }
 
-  const toggleFullscreen = useCallback(() => {
-    if (!containerRef.current) return;
-
-    if (!document.fullscreenElement) {
-      containerRef.current.requestFullscreen().catch((err) => {
-        console.error(`Error attempting to enable fullscreen: ${err.message} (${err.name})`);
+        const hls = new Hls();
+        hlsInstance = hls;
+        hls.loadSource(hlsUrl);
+        hls.attachMedia(video);
+        hls.on(Hls.Events.ERROR, (_, data) => {
+          if (data.fatal) {
+            setPlayerError({
+              url: hlsUrl,
+              message: "Không tải được luồng phim. Vui lòng thử lại sau.",
+            });
+          }
+        });
+      })
+      .catch(() => {
+        setPlayerError({
+          url: hlsUrl,
+          message: "Không tải được trình phát video.",
+        });
       });
-    } else {
-      document.exitFullscreen();
-    }
-  }, []);
+
+    return () => {
+      destroyed = true;
+      hlsInstance?.destroy();
+    };
+  }, [activeEpisode.link_m3u8, mounted, useEmbedPlayer]);
+
+  const handleVideoError = useCallback(() => {
+    const hlsUrl = activeEpisode.link_m3u8?.trim();
+
+    if (!hlsUrl) return;
+
+    setPlayerError({
+      url: hlsUrl,
+      message: "Trình duyệt không phát được nguồn này. Hãy thử server gốc.",
+    });
+  }, [activeEpisode.link_m3u8]);
+
+  const activePlayerError =
+    playerError?.url === activeEpisode.link_m3u8?.trim()
+      ? playerError.message
+      : null;
 
   if (!mounted) {
     return <div className="aspect-video w-full bg-black rounded-lg animate-pulse" />;
@@ -161,80 +177,67 @@ export default function CustomPlayer(props: CustomPlayerProps) {
         ref={containerRef}
         className={cn(
           "relative w-full bg-black shadow-lg group overflow-hidden",
-          isFullscreen ? "h-screen w-screen rounded-none" : "aspect-video rounded-lg"
+          "aspect-video rounded-lg"
         )}
       >
-        <iframe
-          src={activeEpisode.link_embed}
-          className="absolute inset-0 z-0 h-full w-full border-0"
-          title={`Xem phim ${movieSlug}`}
-        />
+        {useEmbedPlayer && activeEpisode.link_embed ? (
+          <iframe
+            src={activeEpisode.link_embed}
+            className="absolute inset-0 z-0 h-full w-full border-0"
+            title={`Xem phim ${movieSlug}`}
+            allow="autoplay; fullscreen; picture-in-picture"
+            allowFullScreen
+            referrerPolicy="no-referrer"
+          />
+        ) : activeEpisode.link_m3u8 ? (
+          <video
+            key={activeEpisode.link_m3u8}
+            ref={videoRef}
+            className="absolute inset-0 z-0 h-full w-full"
+            controls
+            playsInline
+            poster={props.posterUrl}
+            title={`Xem phim ${movieSlug}`}
+            onError={handleVideoError}
+          />
+        ) : activeEpisode.link_embed ? (
+          <iframe
+            src={activeEpisode.link_embed}
+            className="absolute inset-0 z-0 h-full w-full border-0"
+            title={`Xem phim ${movieSlug}`}
+            allow="autoplay; fullscreen; picture-in-picture"
+            allowFullScreen
+            referrerPolicy="no-referrer"
+          />
+        ) : (
+          <div className="absolute inset-0 z-0 flex items-center justify-center px-6 text-center text-sm text-white/80">
+            Tập phim này chưa có nguồn phát khả dụng.
+          </div>
+        )}
 
-        {/* Episode controls */}
-        <div className={cn(
-          "absolute bottom-[5px] right-28 z-[2147483647] flex gap-1 md:right-40"
-        )}>
-          {previousEpisode && (
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  onClick={handlePrevious}
-                  variant="ghost"
-                  size="icon"
-                  className="h-8 w-8 p-0 bg-black/80 text-white hover:bg-white/20 hover:text-white"
-                >
-                  <SkipBack className="h-3.5 w-3.5" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>Tập trước</p>
-              </TooltipContent>
-            </Tooltip>
-          )}
-          {nextEpisode && (
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  onClick={handleNext}
-                  variant="ghost"
-                  size="icon"
-                  className="h-8 w-8 p-0 bg-black/80 text-white hover:bg-white/20 hover:text-white"
-                >
-                  <SkipForward className="h-3.5 w-3.5" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>Tập tiếp theo</p>
-              </TooltipContent>
-            </Tooltip>
-          )}
-        </div>
-
-        <div className="absolute bottom-[5px] right-3 z-[2147483647] hidden h-10 w-10 items-center justify-center bg-black/80 md:flex">
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button
-                onClick={toggleFullscreen}
-                variant="ghost"
-                size="icon"
-                className="h-8 w-8 p-0 text-white hover:bg-white/20 hover:text-white"
-              >
-                {isFullscreen ? <Minimize className="h-3.5 w-3.5" /> : <Maximize className="h-3.5 w-3.5" />}
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>{isFullscreen ? "Thoát toàn màn hình" : "Toàn màn hình"}</p>
-            </TooltipContent>
-          </Tooltip>
-        </div>
+        {activePlayerError && (
+          <div className="absolute inset-x-4 top-4 z-10 rounded-md bg-red-950/90 px-4 py-3 text-sm text-white">
+            {activePlayerError}
+          </div>
+        )}
       </div>
 
-      {/* Controls Bar Below Video (Hidden in fullscreen via CSS or just naturally hidden if container is FS) */}
-      {/* Controls Bar Below Video */}
-      <div className={cn("flex items-center justify-end gap-3 px-1", isFullscreen && "hidden")}>
-        <span className="text-xs text-muted-foreground mr-auto">
-          Nếu không xem được, hãy thử đổi Server khác hoặc reload lại trang.
+      <div className="flex flex-wrap items-center justify-end gap-3 px-1">
+        <span className="mr-auto text-xs text-muted-foreground">
+          Nếu không xem được, hãy thử server gốc hoặc reload lại trang.
         </span>
+        {activeEpisode.link_embed && (
+          <Button
+            type="button"
+            variant="secondary"
+            size="sm"
+            className="gap-2"
+            onClick={() => setUseEmbedPlayer((current) => !current)}
+          >
+            <Server className="h-4 w-4" />
+            {useEmbedPlayer ? "Dùng HLS" : "Server gốc"}
+          </Button>
+        )}
       </div>
     </div >
   );

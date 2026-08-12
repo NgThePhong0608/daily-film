@@ -23,7 +23,7 @@ export default function EpisodeList({ episodes, currentEpisodeSlug, movieSlug }:
           <div className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-4 lg:grid-cols-5 gap-2">
             {server.server_data.map((ep) => (
               <Link
-                key={ep.slug}
+                key={`${server.server_name}-${ep.slug}`}
                 href={`/xem-phim/${movieSlug}/${ep.slug}`}
                 className="w-full"
               >
