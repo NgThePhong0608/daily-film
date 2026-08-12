@@ -1,4 +1,4 @@
-import { getMovieDetail } from "@/lib/ophim";
+import { getMovieDetail, resolveEpisodeHlsUrl } from "@/lib/ophim";
 import EpisodeList from "@/components/movie/EpisodeList";
 import { notFound } from "next/navigation";
 import { Metadata } from 'next';
@@ -40,7 +40,7 @@ export default async function WatchPage(props: Props) {
   // Usually we prefer the first server or let user choose server. 
   // For simplicity, find the episode in the first server that contains it.
 
-  let currentEpisode = null;
+  let currentEpisode: ServerData | null = null;
   let playerEpisodes: ServerData[] = [];
   let previousEpisodeSlug = undefined;
   let nextEpisodeSlug = undefined;
@@ -64,24 +64,35 @@ export default async function WatchPage(props: Props) {
 
   if (!currentEpisode) return notFound();
 
+  const resolvedHlsUrl = await resolveEpisodeHlsUrl(currentEpisode);
+  const currentEpisodeWithPlayback = {
+    ...currentEpisode,
+    link_m3u8: resolvedHlsUrl || currentEpisode.link_m3u8,
+  };
+  const playerEpisodesWithPlayback = playerEpisodes.map((episode) =>
+    episode.slug === currentEpisodeWithPlayback.slug
+      ? currentEpisodeWithPlayback
+      : episode,
+  );
+
   return (
     <div className="container py-8">
       <div className="grid gap-8 lg:grid-cols-[1fr_350px]">
         <div className="space-y-6">
           <div className="space-y-2">
             <h1 className="text-2xl font-bold">{movie.name}</h1>
-            <p className="text-muted-foreground">Tập: {currentEpisode.name}</p>
+            <p className="text-muted-foreground">Tập: {currentEpisodeWithPlayback.name}</p>
           </div>
 
           <CustomPlayer
-            hlsUrl={currentEpisode.link_m3u8}
-            embedUrl={currentEpisode.link_embed}
+            hlsUrl={currentEpisodeWithPlayback.link_m3u8}
+            embedUrl={currentEpisodeWithPlayback.link_embed}
             movieSlug={movie.slug}
             movieTitle={movie.name}
             posterUrl={movie.poster_url}
             episodeSlug={params.episode}
-            episodeName={currentEpisode.name}
-            episodes={playerEpisodes}
+            episodeName={currentEpisodeWithPlayback.name}
+            episodes={playerEpisodesWithPlayback}
             previousEpisodeSlug={previousEpisodeSlug}
             nextEpisodeSlug={nextEpisodeSlug}
           />

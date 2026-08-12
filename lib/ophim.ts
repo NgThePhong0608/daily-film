@@ -67,6 +67,45 @@ function filterPlayableEpisodes(episodes: MovieDetail["episodes"]) {
     .filter((server) => server.server_data.length > 0);
 }
 
+function extractEmbeddedHlsUrl(embedHtml: string, embedUrl: string) {
+  const match = embedHtml.match(/\bconst\s+url\s*=\s*["']([^"']+\.m3u8[^"']*)["']/);
+
+  if (!match?.[1]) return null;
+
+  try {
+    return new URL(match[1], embedUrl).toString();
+  } catch {
+    return null;
+  }
+}
+
+export async function resolveEpisodeHlsUrl(episode: {
+  link_embed?: string | null;
+  link_m3u8?: string | null;
+}) {
+  const fallbackUrl = episode.link_m3u8?.trim() || "";
+  const embedUrl = episode.link_embed?.trim();
+
+  if (!embedUrl) return fallbackUrl;
+
+  try {
+    const res = await fetchWithRetry(embedUrl, {
+      retries: 1,
+      retryDelay: 500,
+      timeout: 5000,
+      next: { revalidate: 300 },
+    });
+
+    if (!res.ok) return fallbackUrl;
+
+    const signedUrl = extractEmbeddedHlsUrl(await res.text(), embedUrl);
+    return signedUrl || fallbackUrl;
+  } catch (error) {
+    console.warn("resolveEpisodeHlsUrl fallback:", error);
+    return fallbackUrl;
+  }
+}
+
 export async function getLatestMovies(page = 1) {
   try {
     const res = await fetchWithRetry(

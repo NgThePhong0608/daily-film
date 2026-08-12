@@ -131,6 +131,9 @@ export default function CustomPlayer(props: CustomPlayerProps) {
         hls.attachMedia(video);
         hls.on(Hls.Events.ERROR, (_, data) => {
           if (data.fatal) {
+            if (activeEpisode.link_embed) {
+              setUseEmbedPlayer(true);
+            }
             setPlayerError({
               url: hlsUrl,
               message: "Không tải được luồng phim. Vui lòng thử lại sau.",
@@ -149,7 +152,7 @@ export default function CustomPlayer(props: CustomPlayerProps) {
       destroyed = true;
       hlsInstance?.destroy();
     };
-  }, [activeEpisode.link_m3u8, mounted, useEmbedPlayer]);
+  }, [activeEpisode.link_embed, activeEpisode.link_m3u8, mounted, useEmbedPlayer]);
 
   const handleVideoError = useCallback(() => {
     const hlsUrl = activeEpisode.link_m3u8?.trim();
@@ -160,7 +163,11 @@ export default function CustomPlayer(props: CustomPlayerProps) {
       url: hlsUrl,
       message: "Trình duyệt không phát được nguồn này. Hãy thử server gốc.",
     });
-  }, [activeEpisode.link_m3u8]);
+
+    if (activeEpisode.link_embed) {
+      setUseEmbedPlayer(true);
+    }
+  }, [activeEpisode.link_embed, activeEpisode.link_m3u8]);
 
   const activePlayerError =
     playerError?.url === activeEpisode.link_m3u8?.trim()
