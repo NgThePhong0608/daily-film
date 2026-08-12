@@ -151,10 +151,10 @@ export async function getTopRatedMovies(limit = 10): Promise<RatedMovie[]> {
     if (ratedList.length === 0) return [];
 
     // 2. Enrich with Movie Data
-    // We need import { getMovieDetail } from "@/lib/ophim";
+    // We need import { getMovieDetail } from "@/lib/movie-api";
     // But this file doesn't import it yet.
     
-    const { getMovieDetail } = await import("@/lib/ophim");
+    const { getMovieDetail } = await import("@/lib/movie-api");
 
     const enrichedList = await Promise.all(
         ratedList.map(async (item) => {

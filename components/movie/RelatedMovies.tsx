@@ -1,4 +1,4 @@
-import { getMoviesByCategory } from "@/lib/ophim";
+import { getMoviesByCategory } from "@/lib/movie-api";
 import MovieGrid from "@/components/movie/MovieGrid";
 import { MovieDetail } from "@/types/movie";
 

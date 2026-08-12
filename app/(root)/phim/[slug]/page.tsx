@@ -1,4 +1,4 @@
-import { getMovieDetail, resolveOphimImageUrl } from "@/lib/ophim";
+import { getMovieDetail, resolveMovieImageUrl } from "@/lib/movie-api";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import EpisodeList from "@/components/movie/EpisodeList";
@@ -27,7 +27,7 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
     title: `${data.movie.name} - Daily Film`,
     description: data.movie.content.slice(0, 160),
     openGraph: {
-      images: [resolveOphimImageUrl(data.movie.poster_url)],
+      images: [resolveMovieImageUrl(data.movie.poster_url)],
     },
   };
 }
@@ -45,8 +45,8 @@ export default async function MovieDetailPage(props: Props) {
   const content = movie.content.replace(/<p>&nbsp;<\/p>/g, '');
 
 
-  const posterUrl = resolveOphimImageUrl(movie.poster_url);
-  const thumbUrl = resolveOphimImageUrl(movie.thumb_url);
+  const posterUrl = resolveMovieImageUrl(movie.poster_url);
+  const thumbUrl = resolveMovieImageUrl(movie.thumb_url);
 
   return (
     <div className="min-h-screen pb-12">

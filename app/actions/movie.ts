@@ -1,6 +1,6 @@
 "use server";
 
-import { getLatestMovies } from "@/lib/ophim";
+import { getLatestMovies } from "@/lib/movie-api";
 import { Movie } from "@/types/movie";
 
 export type LoadMoreMoviesResult = {

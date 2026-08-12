@@ -1,5 +1,5 @@
 import { MetadataRoute } from 'next'
-import { getLatestMovies } from '@/lib/ophim'
+import { getLatestMovies } from '@/lib/movie-api'
 import { MOVIE_CATEGORY_SLUGS, COUNTRY_SLUGS } from '@/lib/constants'
 
 export const revalidate = 3600 // Revalidate every hour

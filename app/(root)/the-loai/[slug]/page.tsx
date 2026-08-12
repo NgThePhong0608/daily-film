@@ -1,9 +1,10 @@
-import { getMoviesByCategory } from "@/lib/ophim";
+import { getMoviesByCategory } from "@/lib/movie-api";
 import { Metadata } from "next";
 import MovieGrid from "@/components/movie/MovieGrid";
 import Pagination from "@/components/shared/Pagination";
 import { parsePageParam, parseSortParam, sortMovies } from "@/lib/utils";
 import ListingToolbar from "@/components/shared/ListingToolbar";
+import { DEFAULT_LISTING_SORT } from "@/lib/constants";
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -34,7 +35,8 @@ export default async function CategoryPage(props: Props) {
   const title = slug.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
 
   const { items, pagination } = await getMoviesByCategory(slug, page);
-  const sortedItems = sortMovies(items, sort);
+  const visibleItems =
+    sort === DEFAULT_LISTING_SORT ? items : sortMovies(items, sort);
 
   return (
     <div className="container py-8">
@@ -50,11 +52,11 @@ export default async function CategoryPage(props: Props) {
 
       {items.length > 0 ? (
         <>
-          <MovieGrid movies={sortedItems} />
+          <MovieGrid movies={visibleItems} />
           {pagination && (
             <Pagination
               pagination={pagination}
-              baseUrl={`/the-loai/${slug}${sort === "latest" ? "" : `?sort=${sort}`}`}
+              baseUrl={`/the-loai/${slug}${sort === DEFAULT_LISTING_SORT ? "" : `?sort=${sort}`}`}
             />
           )}
         </>

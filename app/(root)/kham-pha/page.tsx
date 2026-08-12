@@ -1,17 +1,10 @@
 import Link from "next/link";
 import { getTrendingMovies } from "@/app/actions/analytics";
 import { getTopRatedMovies } from "@/app/actions/ratings";
+import { getCategories, getCountries, getYears } from "@/lib/movie-api";
 import MovieCard from "@/components/movie/MovieCard";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  COUNTRY_LABELS,
-  COUNTRY_SLUGS,
-  MOVIE_CATEGORY_LABELS,
-  MOVIE_CATEGORY_SLUGS,
-  type CountrySlug,
-  type MovieCategorySlug,
-} from "@/lib/constants";
 
 export const metadata = {
   title: "Khám phá phim - Daily Film",
@@ -20,9 +13,12 @@ export const metadata = {
 };
 
 export default async function DiscoverPage() {
-  const [trendingMovies, topRatedMovies] = await Promise.all([
+  const [trendingMovies, topRatedMovies, categories, countries, years] = await Promise.all([
     getTrendingMovies("day"),
     getTopRatedMovies(6),
+    getCategories(),
+    getCountries(),
+    getYears(),
   ]);
 
   return (
@@ -90,16 +86,16 @@ export default async function DiscoverPage() {
         </section>
       )}
 
-      <div className="grid gap-6 lg:grid-cols-2">
+      <div className="grid gap-6 lg:grid-cols-3">
         <Card>
           <CardHeader>
             <CardTitle>Khám phá theo thể loại</CardTitle>
           </CardHeader>
           <CardContent className="flex flex-wrap gap-2">
-            {MOVIE_CATEGORY_SLUGS.map((slug) => (
-              <Button key={slug} variant="outline" size="sm" asChild>
-                <Link href={`/the-loai/${slug}`}>
-                  {MOVIE_CATEGORY_LABELS[slug as MovieCategorySlug]}
+            {categories.map((category) => (
+              <Button key={category.id || category.slug} variant="outline" size="sm" asChild>
+                <Link href={`/the-loai/${category.slug}`}>
+                  {category.name}
                 </Link>
               </Button>
             ))}
@@ -111,10 +107,25 @@ export default async function DiscoverPage() {
             <CardTitle>Khám phá theo quốc gia</CardTitle>
           </CardHeader>
           <CardContent className="flex flex-wrap gap-2">
-            {COUNTRY_SLUGS.map((slug) => (
-              <Button key={slug} variant="outline" size="sm" asChild>
-                <Link href={`/quoc-gia/${slug}`}>
-                  {COUNTRY_LABELS[slug as CountrySlug]}
+            {countries.map((country) => (
+              <Button key={country.id || country.slug} variant="outline" size="sm" asChild>
+                <Link href={`/quoc-gia/${country.slug}`}>
+                  {country.name}
+                </Link>
+              </Button>
+            ))}
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Khám phá theo năm</CardTitle>
+          </CardHeader>
+          <CardContent className="flex flex-wrap gap-2">
+            {years.slice(0, 36).map((year) => (
+              <Button key={year.id || year.slug} variant="outline" size="sm" asChild>
+                <Link href={`/nam/${year.slug}`}>
+                  {year.name}
                 </Link>
               </Button>
             ))}

@@ -15,7 +15,6 @@ import {
 } from "@/components/ui/sheet";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
-  POPULAR_COUNTRY_SLUGS,
   COUNTRY_SLUGS,
   COUNTRY_LABELS,
   MOVIE_CATEGORY_SLUGS,
@@ -93,6 +92,13 @@ export default function Header() {
                         className="text-sm hover:text-primary text-muted-foreground hover:underline flex items-center gap-2"
                       >
                         Playlist
+                      </Link>
+                      <Link
+                        href="/dien-vien"
+                        onClick={() => setOpen(false)}
+                        className="text-sm hover:text-primary text-muted-foreground hover:underline flex items-center gap-2"
+                      >
+                        Diễn Viên
                       </Link>
                     </div>
                   </div>
@@ -250,6 +256,12 @@ export default function Header() {
             className="transition-colors hover:text-foreground/80 text-foreground/60"
           >
             Playlist
+          </Link>
+          <Link
+            href="/dien-vien"
+            className="transition-colors hover:text-foreground/80 text-foreground/60"
+          >
+            Diễn Viên
           </Link>
         </div>
 

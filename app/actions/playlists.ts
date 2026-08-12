@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 
 import { db } from "@/lib/db";
-import { getMovieDetail } from "@/lib/ophim";
+import { getMovieDetail } from "@/lib/movie-api";
 import { Movie } from "@/types/movie";
 
 const MAX_PLAYLIST_NAME_LENGTH = 80;

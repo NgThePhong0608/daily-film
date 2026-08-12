@@ -190,14 +190,16 @@ export const COUNTRY_LABELS: Record<CountrySlug, string> = {
 };
 
 export const LISTING_SORT_OPTIONS = [
-  { value: "latest", label: "Mới cập nhật" },
   { value: "year-desc", label: "Năm mới nhất" },
+  { value: "latest", label: "Mới cập nhật" },
   { value: "year-asc", label: "Năm cũ nhất" },
   { value: "az", label: "A-Z" },
   { value: "za", label: "Z-A" },
 ] as const;
 
 export type ListingSortValue = (typeof LISTING_SORT_OPTIONS)[number]["value"];
+
+export const DEFAULT_LISTING_SORT: ListingSortValue = "year-desc";
 
 export const LIST_MOVIES_TYPE = [
   {

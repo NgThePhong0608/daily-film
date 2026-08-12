@@ -1,9 +1,10 @@
-import { searchMovies } from "@/lib/ophim";
+import { searchMovies } from "@/lib/movie-api";
 import { MOVIE_CATEGORY_LABELS, type MovieCategorySlug } from "@/lib/constants";
 import MovieGrid from "@/components/movie/MovieGrid";
 import Pagination from "@/components/shared/Pagination";
 import { parsePageParam, parseSortParam, sortMovies } from "@/lib/utils";
 import ListingToolbar from "@/components/shared/ListingToolbar";
+import { DEFAULT_LISTING_SORT } from "@/lib/constants";
 
 interface Props {
   searchParams: Promise<{ keyword?: string; page?: string; sort?: string }>;
@@ -20,7 +21,8 @@ export default async function SearchPage(props: Props) {
     MOVIE_CATEGORY_LABELS[keyword as MovieCategorySlug] || keyword;
 
   const { items, pagination } = await searchMovies(keyword, page);
-  const sortedItems = sortMovies(items, sort);
+  const visibleItems =
+    sort === DEFAULT_LISTING_SORT ? items : sortMovies(items, sort);
 
   return (
     <div className="container py-8">
@@ -39,11 +41,11 @@ export default async function SearchPage(props: Props) {
 
       {items.length > 0 ? (
         <>
-          <MovieGrid movies={sortedItems} />
+          <MovieGrid movies={visibleItems} />
           {pagination && (
             <Pagination
               pagination={pagination}
-              baseUrl={`/tim-kiem?keyword=${encodeURIComponent(keyword)}${sort === "latest" ? "" : `&sort=${sort}`}`}
+              baseUrl={`/tim-kiem?keyword=${encodeURIComponent(keyword)}${sort === DEFAULT_LISTING_SORT ? "" : `&sort=${sort}`}`}
             />
           )}
         </>

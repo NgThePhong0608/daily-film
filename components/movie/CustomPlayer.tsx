@@ -2,15 +2,13 @@
 
 import React, { useEffect, useState, useRef, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { Button } from "@/components/ui/button";
-import { Server } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { logMovieEvent } from "@/app/actions/analytics";
 import { useWatchHistory } from "@/hooks/use-watch-history";
 import type { ServerData } from "@/types/movie";
 
 interface CustomPlayerProps {
-  hlsUrl?: string; // Kept for compatibility but unused
+  hlsUrl?: string;
   embedUrl: string;
   movieSlug: string;
   movieTitle: string;
@@ -18,9 +16,6 @@ interface CustomPlayerProps {
   episodeSlug: string;
   episodeName: string;
   episodes?: ServerData[];
-  previousEpisodeSlug?: string;
-  nextEpisodeSlug?: string;
-  initialTime?: number; // Kept for compatibility but unused
 }
 
 export default function CustomPlayer(props: CustomPlayerProps) {
@@ -32,10 +27,6 @@ export default function CustomPlayer(props: CustomPlayerProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [mounted, setMounted] = useState(false);
   const [useEmbedPlayer, setUseEmbedPlayer] = useState(false);
-  const [playerError, setPlayerError] = useState<{
-    url: string;
-    message: string;
-  } | null>(null);
   const [activeEpisode, setActiveEpisode] = useState<ServerData>(() => ({
     name: props.episodeName,
     slug: props.episodeSlug,
@@ -118,10 +109,9 @@ export default function CustomPlayer(props: CustomPlayerProps) {
         if (destroyed) return;
 
         if (!Hls.isSupported()) {
-          setPlayerError({
-            url: hlsUrl,
-            message: "Trình duyệt này không hỗ trợ phát video HLS.",
-          });
+          if (activeEpisode.link_embed) {
+            setUseEmbedPlayer(true);
+          }
           return;
         }
 
@@ -130,22 +120,15 @@ export default function CustomPlayer(props: CustomPlayerProps) {
         hls.loadSource(hlsUrl);
         hls.attachMedia(video);
         hls.on(Hls.Events.ERROR, (_, data) => {
-          if (data.fatal) {
-            if (activeEpisode.link_embed) {
-              setUseEmbedPlayer(true);
-            }
-            setPlayerError({
-              url: hlsUrl,
-              message: "Không tải được luồng phim. Vui lòng thử lại sau.",
-            });
+          if (data.fatal && activeEpisode.link_embed) {
+            setUseEmbedPlayer(true);
           }
         });
       })
       .catch(() => {
-        setPlayerError({
-          url: hlsUrl,
-          message: "Không tải được trình phát video.",
-        });
+        if (activeEpisode.link_embed) {
+          setUseEmbedPlayer(true);
+        }
       });
 
     return () => {
@@ -159,20 +142,10 @@ export default function CustomPlayer(props: CustomPlayerProps) {
 
     if (!hlsUrl) return;
 
-    setPlayerError({
-      url: hlsUrl,
-      message: "Trình duyệt không phát được nguồn này. Hãy thử server gốc.",
-    });
-
     if (activeEpisode.link_embed) {
       setUseEmbedPlayer(true);
     }
   }, [activeEpisode.link_embed, activeEpisode.link_m3u8]);
-
-  const activePlayerError =
-    playerError?.url === activeEpisode.link_m3u8?.trim()
-      ? playerError.message
-      : null;
 
   if (!mounted) {
     return <div className="aspect-video w-full bg-black rounded-lg animate-pulse" />;
@@ -220,30 +193,6 @@ export default function CustomPlayer(props: CustomPlayerProps) {
           <div className="absolute inset-0 z-0 flex items-center justify-center px-6 text-center text-sm text-white/80">
             Tập phim này chưa có nguồn phát khả dụng.
           </div>
-        )}
-
-        {activePlayerError && (
-          <div className="absolute inset-x-4 top-4 z-10 rounded-md bg-red-950/90 px-4 py-3 text-sm text-white">
-            {activePlayerError}
-          </div>
-        )}
-      </div>
-
-      <div className="flex flex-wrap items-center justify-end gap-3 px-1">
-        <span className="mr-auto text-xs text-muted-foreground">
-          Nếu không xem được, hãy thử server gốc hoặc reload lại trang.
-        </span>
-        {activeEpisode.link_embed && (
-          <Button
-            type="button"
-            variant="secondary"
-            size="sm"
-            className="gap-2"
-            onClick={() => setUseEmbedPlayer((current) => !current)}
-          >
-            <Server className="h-4 w-4" />
-            {useEmbedPlayer ? "Dùng HLS" : "Server gốc"}
-          </Button>
         )}
       </div>
     </div >

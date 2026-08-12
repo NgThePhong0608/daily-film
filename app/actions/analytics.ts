@@ -1,7 +1,7 @@
 "use server";
 
 import { db } from "@/lib/db";
-import { getMovieDetail } from "@/lib/ophim";
+import { getMovieDetail } from "@/lib/movie-api";
 
 /**
  * Log a movie event (play / finish)

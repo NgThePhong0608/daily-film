@@ -1,4 +1,4 @@
-import { getMovieDetail, resolveEpisodeHlsUrl } from "@/lib/ophim";
+import { getMovieDetail, resolveEpisodeHlsUrl } from "@/lib/movie-api";
 import EpisodeList from "@/components/movie/EpisodeList";
 import { notFound } from "next/navigation";
 import { Metadata } from 'next';
@@ -42,8 +42,6 @@ export default async function WatchPage(props: Props) {
 
   let currentEpisode: ServerData | null = null;
   let playerEpisodes: ServerData[] = [];
-  let previousEpisodeSlug = undefined;
-  let nextEpisodeSlug = undefined;
 
   // Flatten search or check servers
   for (const server of episodes) {
@@ -51,13 +49,6 @@ export default async function WatchPage(props: Props) {
     if (foundIndex !== -1) {
       currentEpisode = server.server_data[foundIndex];
       playerEpisodes = server.server_data;
-      if (foundIndex > 0) {
-        previousEpisodeSlug = server.server_data[foundIndex - 1].slug;
-      }
-      // Check for next episode in the SAME server
-      if (foundIndex + 1 < server.server_data.length) {
-        nextEpisodeSlug = server.server_data[foundIndex + 1].slug;
-      }
       break;
     }
   }
@@ -93,8 +84,6 @@ export default async function WatchPage(props: Props) {
             episodeSlug={params.episode}
             episodeName={currentEpisodeWithPlayback.name}
             episodes={playerEpisodesWithPlayback}
-            previousEpisodeSlug={previousEpisodeSlug}
-            nextEpisodeSlug={nextEpisodeSlug}
           />
 
           <div className="bg-muted/30 p-4 rounded-lg">

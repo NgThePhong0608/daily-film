@@ -4,7 +4,7 @@ import {
   getMoviesByCountry,
   getMoviesByCategory,
   searchMovies,
-} from "@/lib/ophim";
+} from "@/lib/movie-api";
 
 export async function fetchMoreMoviesByCountry(slug: string, page: number) {
   const { items, pagination } = await getMoviesByCountry(slug, page);

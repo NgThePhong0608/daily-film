@@ -2,6 +2,7 @@ import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { Movie } from "@/types/movie";
 import {
+  DEFAULT_LISTING_SORT,
   isValidListingSortValue,
   type ListingSortValue,
 } from "@/lib/constants";
@@ -22,7 +23,7 @@ export function parsePageParam(page?: string) {
 
 export function parseSortParam(sort?: string): ListingSortValue {
   if (!sort || !isValidListingSortValue(sort)) {
-    return "latest";
+    return DEFAULT_LISTING_SORT;
   }
 
   return sort;

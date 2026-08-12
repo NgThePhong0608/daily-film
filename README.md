@@ -62,8 +62,7 @@ Follow these steps to run the project locally.
     TURSO_DATABASE_URL="libsql://your-db-url.turso.io"
     TURSO_TOKEN="your-turso-token"
     ADMIN_FEEDBACK_PASSWORD="set-a-strong-password"
-    NEXT_PUBLIC_OPHIM_BASE_URL=""
-    NEXT_PUBLIC_OPHIM_IMAGE_URL=""
+    NEXT_PUBLIC_VSMOV_BASE_URL="https://vsmov.com/api"
     ```
 
 5.  **Initialize Database Tables**:

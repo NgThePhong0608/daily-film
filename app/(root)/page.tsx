@@ -1,4 +1,4 @@
-import { getLatestMovies, resolveOphimImageUrl } from "@/lib/ophim";
+import { getLatestMovies, resolveMovieImageUrl } from "@/lib/movie-api";
 
 import ContinueWatching from "@/components/home/ContinueWatching";
 import TrendingSection from "@/components/home/TrendingSection";
@@ -11,6 +11,7 @@ import MovieGrid from "@/components/movie/MovieGrid";
 import Pagination from "@/components/shared/Pagination";
 import { parsePageParam, parseSortParam, sortMovies } from "@/lib/utils";
 import ListingToolbar from "@/components/shared/ListingToolbar";
+import { DEFAULT_LISTING_SORT } from "@/lib/constants";
 
 interface Props {
   searchParams: Promise<{ page?: string; sort?: string }>;
@@ -21,7 +22,8 @@ export default async function Home(props: Props) {
   const page = parsePageParam(searchParams.page);
   const sort = parseSortParam(searchParams.sort);
   const { items: latestMovies, pagination } = await getLatestMovies(page);
-  const sortedLatestMovies = sortMovies(latestMovies, sort);
+  const visibleLatestMovies =
+    sort === DEFAULT_LISTING_SORT ? latestMovies : sortMovies(latestMovies, sort);
 
   // Featured movie (first one)
   const featured = latestMovies?.[0];
@@ -32,7 +34,7 @@ export default async function Home(props: Props) {
       {featured && (
         <section className="relative h-[50vh] w-full overflow-hidden sm:h-[60vh] md:h-[70vh]">
           <RemoteImage
-            src={resolveOphimImageUrl(featured.poster_url)}
+            src={resolveMovieImageUrl(featured.poster_url)}
             alt={featured.name}
             fill
             priority
@@ -69,14 +71,14 @@ export default async function Home(props: Props) {
         <TopRatedSection />
         <ListingToolbar pathname="/" sort={sort} sectionId="phim-moi-cap-nhat" />
         <MovieGrid
-          movies={sortedLatestMovies}
+          movies={visibleLatestMovies}
           title="Phim Mới Cập Nhật"
           id="phim-moi-cap-nhat"
         />
         {pagination && (
           <Pagination
             pagination={pagination}
-            baseUrl={`/${sort === "latest" ? "" : `?sort=${sort}`}#phim-moi-cap-nhat`}
+            baseUrl={`/${sort === DEFAULT_LISTING_SORT ? "" : `?sort=${sort}`}#phim-moi-cap-nhat`}
           />
         )}
       </div>

@@ -1,51 +1,46 @@
-import { getMoviesByCountry } from "@/lib/movie-api";
-import { COUNTRY_LABELS, DEFAULT_LISTING_SORT, type CountrySlug } from "@/lib/constants";
+import { getMoviesByYear } from "@/lib/movie-api";
 import { Metadata } from "next";
 import MovieGrid from "@/components/movie/MovieGrid";
 import Pagination from "@/components/shared/Pagination";
 import { parsePageParam, parseSortParam, sortMovies } from "@/lib/utils";
 import ListingToolbar from "@/components/shared/ListingToolbar";
+import { DEFAULT_LISTING_SORT } from "@/lib/constants";
 
 interface Props {
-  params: Promise<{ slug: string }>;
+  params: Promise<{ year: string }>;
   searchParams: Promise<{ page?: string; sort?: string }>;
 }
 
 export async function generateMetadata(props: Props): Promise<Metadata> {
   const params = await props.params;
-  const countryName = COUNTRY_LABELS[params.slug as CountrySlug] || params.slug;
 
   return {
-    title: `Phim ${countryName} - Daily Film`,
-    description: `Xem phim ${countryName} mới nhất, chất lượng cao. Cập nhật liên tục phim ${countryName} hay nhất.`,
+    title: `Phim năm ${params.year} - Daily Film`,
+    description: `Xem phim năm ${params.year} mới nhất, chất lượng cao.`,
   };
 }
 
-export default async function CountryPage(props: Props) {
+export default async function YearPage(props: Props) {
   const params = await props.params;
   const searchParams = await props.searchParams;
-  const { slug } = params;
   const page = parsePageParam(searchParams.page);
   const sort = parseSortParam(searchParams.sort);
 
-  // Get country label for display
-  const countryName = COUNTRY_LABELS[slug as CountrySlug] || slug;
-
-  const { items, pagination } = await getMoviesByCountry(slug, page);
+  const { items, pagination } = await getMoviesByYear(params.year, page);
   const visibleItems =
     sort === DEFAULT_LISTING_SORT ? items : sortMovies(items, sort);
 
   return (
     <div className="container py-8">
-      <h1 className="text-2xl font-bold mb-2">Phim {countryName}</h1>
+      <h1 className="mb-2 text-2xl font-bold">Phim năm {params.year}</h1>
 
       {pagination && (
-        <p className="text-muted-foreground mb-4">
+        <p className="mb-4 text-muted-foreground">
           Tổng cộng {pagination.totalItems.toLocaleString()} phim
         </p>
       )}
 
-      <ListingToolbar pathname={`/quoc-gia/${slug}`} sort={sort} />
+      <ListingToolbar pathname={`/nam/${params.year}`} sort={sort} />
 
       {items.length > 0 ? (
         <>
@@ -53,7 +48,7 @@ export default async function CountryPage(props: Props) {
           {pagination && (
             <Pagination
               pagination={pagination}
-              baseUrl={`/quoc-gia/${slug}${sort === DEFAULT_LISTING_SORT ? "" : `?sort=${sort}`}`}
+              baseUrl={`/nam/${params.year}${sort === DEFAULT_LISTING_SORT ? "" : `?sort=${sort}`}`}
             />
           )}
         </>

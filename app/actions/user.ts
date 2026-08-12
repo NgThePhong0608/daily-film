@@ -146,7 +146,7 @@ export async function getUserStats(username: string, movieSlug: string) {
   }
 }
 
-import { getMovieDetail } from "@/lib/ophim";
+import { getMovieDetail } from "@/lib/movie-api";
 
 /**
  * Get User's Library with full details (for Client Pages)

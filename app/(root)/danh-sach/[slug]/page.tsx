@@ -1,10 +1,11 @@
-import { getMoviesList } from "@/lib/ophim";
+import { getMoviesList } from "@/lib/movie-api";
 import { LIST_MOVIES_TYPE } from "@/lib/constants";
 import { Metadata } from "next";
 import MovieGrid from "@/components/movie/MovieGrid";
 import Pagination from "@/components/shared/Pagination";
 import { parsePageParam, parseSortParam, sortMovies } from "@/lib/utils";
 import ListingToolbar from "@/components/shared/ListingToolbar";
+import { DEFAULT_LISTING_SORT } from "@/lib/constants";
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -32,7 +33,8 @@ export default async function ListTypeMoviePage(props: Props) {
   const typeFilm = LIST_MOVIES_TYPE.find((item) => item.value === slug)?.label || slug;
 
   const { items, pagination } = await getMoviesList(slug, page);
-  const sortedItems = sortMovies(items, sort);
+  const visibleItems =
+    sort === DEFAULT_LISTING_SORT ? items : sortMovies(items, sort);
 
   return (
     <div className="container py-8">
@@ -48,11 +50,11 @@ export default async function ListTypeMoviePage(props: Props) {
 
       {items.length > 0 ? (
         <>
-          <MovieGrid movies={sortedItems} />
+          <MovieGrid movies={visibleItems} />
           {pagination && (
             <Pagination
               pagination={pagination}
-              baseUrl={`/danh-sach/${slug}${sort === "latest" ? "" : `?sort=${sort}`}`}
+              baseUrl={`/danh-sach/${slug}${sort === DEFAULT_LISTING_SORT ? "" : `?sort=${sort}`}`}
             />
           )}
         </>

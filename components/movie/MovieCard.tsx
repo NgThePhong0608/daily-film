@@ -3,7 +3,7 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { PlayCircle } from "lucide-react";
 import { Movie } from "@/types/movie";
-import { resolveOphimImageUrl } from "@/lib/ophim";
+import { resolveMovieImageUrl } from "@/lib/movie-api";
 import RemoteImage from "@/components/shared/RemoteImage";
 
 
@@ -12,7 +12,7 @@ interface MovieCardProps {
 }
 
 export default function MovieCard({ movie }: MovieCardProps) {
-  const thumbUrl = resolveOphimImageUrl(movie.thumb_url);
+  const thumbUrl = resolveMovieImageUrl(movie.thumb_url);
 
   return (
     <Link href={`/phim/${movie.slug}`}>

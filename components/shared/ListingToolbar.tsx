@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import {
+  DEFAULT_LISTING_SORT,
   LISTING_SORT_OPTIONS,
   type ListingSortValue,
 } from "@/lib/constants";
@@ -28,7 +29,7 @@ export default function ListingToolbar({
       params.set("keyword", keyword);
     }
 
-    if (nextSort !== "latest") {
+    if (nextSort !== DEFAULT_LISTING_SORT) {
       params.set("sort", nextSort);
     }
 

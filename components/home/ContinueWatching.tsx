@@ -2,7 +2,7 @@
 
 import { useWatchHistory } from "@/hooks/use-watch-history";
 import Link from "next/link";
-import { resolveOphimImageUrl } from "@/lib/ophim";
+import { resolveMovieImageUrl } from "@/lib/movie-api";
 import { PlayCircle, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -28,7 +28,7 @@ export default function ContinueWatching({ initialData = [] }: Props) {
       <div className="flex space-x-4 overflow-x-auto pb-4 scrollbar-hide">
         {displayItems.map((item) => {
           if (!item.posterUrl) return null;
-          const posterUrl = resolveOphimImageUrl(item.posterUrl);
+          const posterUrl = resolveMovieImageUrl(item.posterUrl);
 
           return (
             <div key={item.movieSlug} className="relative group shrink-0 w-[160px]">
