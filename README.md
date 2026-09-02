@@ -62,7 +62,7 @@ Follow these steps to run the project locally.
     TURSO_DATABASE_URL="libsql://your-db-url.turso.io"
     TURSO_TOKEN="your-turso-token"
     ADMIN_FEEDBACK_PASSWORD="set-a-strong-password"
-    NEXT_PUBLIC_VSMOV_BASE_URL="https://vsmov.com/api"
+    NEXT_PUBLIC_NGUONC_BASE_URL="https://phim.nguonc.com/api"
     ```
 
 5.  **Initialize Database Tables**:

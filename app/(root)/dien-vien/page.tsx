@@ -6,7 +6,7 @@ export const dynamic = "force-dynamic";
 
 export const metadata = {
   title: "Diễn viên - Daily Film",
-  description: "Danh sách diễn viên từ VSMov.",
+  description: "Danh sách diễn viên trên Daily Film.",
 };
 
 export default async function ActorsPage() {

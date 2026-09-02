@@ -7,6 +7,14 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: 'https',
+        hostname: 'phim.nguonc.com',
+      },
+      {
+        protocol: 'https',
+        hostname: '*.nguonc.com',
+      },
+      {
+        protocol: 'https',
         hostname: 'vsmov.com',
       },
       {
@@ -19,7 +27,15 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: 'https',
+        hostname: '*.vsphim.com',
+      },
+      {
+        protocol: 'https',
         hostname: 'image.tmdb.org',
+      },
+      {
+        protocol: 'https',
+        hostname: 'images.unsplash.com',
       }
     ],
   },

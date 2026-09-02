@@ -52,6 +52,7 @@ export default function WelcomePage() {
       return;
     }
 
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setUsername(generateDefaultUsername());
 
     // Mobile PWAs can be finicky with taps during initial layout.

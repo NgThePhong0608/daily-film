@@ -12,6 +12,7 @@ export function useWatchHistory() {
     try {
       const stored = localStorage.getItem(WATCH_HISTORY_KEY);
       if (stored) {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setHistory(JSON.parse(stored));
       }
     } catch (e) {

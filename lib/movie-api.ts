@@ -1,4 +1,4 @@
-import * as vsmov from "@/lib/providers/vsmov";
+import * as nguonc from "@/lib/providers/nguonc";
 
 const FALLBACK_MOVIE_IMAGE = "/window.svg";
 
@@ -12,59 +12,60 @@ export function resolveMovieImageUrl(path?: string | null) {
     trimmedPath.startsWith("https://") ||
     trimmedPath.startsWith("/")
   ) {
-    return vsmov.resolveVsmovImageUrl(trimmedPath);
+    return nguonc.resolveNguoncImageUrl(trimmedPath);
   }
 
   return FALLBACK_MOVIE_IMAGE;
 }
 
 export function getLatestMovies(page = 1) {
-  return vsmov.getLatestMovies(page);
+  return nguonc.getLatestMovies(page);
 }
 
 export function getMovieDetail(slug: string) {
-  return vsmov.getMovieDetail(slug);
+  return nguonc.getMovieDetail(slug);
 }
 
 export function searchMovies(keyword: string, page = 1) {
-  return vsmov.searchMovies(keyword, page);
+  return nguonc.searchMovies(keyword, page);
 }
 
 export function getMoviesByCategory(slug: string, page = 1) {
-  return vsmov.getMoviesByCategory(slug, page);
+  return nguonc.getMoviesByCategory(slug, page);
 }
 
 export function getMoviesByCountry(slug: string, page = 1) {
-  return vsmov.getMoviesByCountry(slug, page);
+  return nguonc.getMoviesByCountry(slug, page);
 }
 
 export function getMoviesByYear(year: string | number, page = 1) {
-  return vsmov.getMoviesByYear(year, page);
+  return nguonc.getMoviesByYear(year, page);
 }
 
 export function getMoviesList(slug: string, page = 1) {
-  return vsmov.getMoviesList(slug, page);
+  return nguonc.getMoviesList(slug, page);
 }
 
 export function getCategories() {
-  return vsmov.getCategories();
+  return nguonc.getCategories();
 }
 
 export function getCountries() {
-  return vsmov.getCountries();
+  return nguonc.getCountries();
 }
 
 export function getYears() {
-  return vsmov.getYears();
+  return nguonc.getYears();
 }
 
 export function getActors(limit?: number) {
-  return vsmov.getActors(limit);
+  return nguonc.getActors(limit);
 }
 
 export function resolveEpisodeHlsUrl(episode: {
   link_embed?: string | null;
   link_m3u8?: string | null;
 }) {
-  return vsmov.resolveEpisodeHlsUrl(episode);
+  return nguonc.resolveEpisodeHlsUrl(episode);
 }
+

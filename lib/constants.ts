@@ -1,31 +1,30 @@
 /**
- * Movie category slugs used for filtering and navigation
+ * Movie category slugs used for filtering and navigation (from phim.nguonc.com)
  */
 
 export const MOVIE_CATEGORY_SLUGS = [
   "hanh-dong",
-  "tinh-cam",
-  "hai-huoc",
-  "co-trang",
-  "tam-ly",
-  "hinh-su",
-  "chien-tranh",
-  "the-thao",
-  "vo-thuat",
-  "vien-tuong",
   "phieu-luu",
-  "khoa-hoc",
-  "kinh-di",
-  "am-nhac",
-  "than-thoai",
+  "hoat-hinh",
+  "phim-hai",
+  "hinh-su",
   "tai-lieu",
-  "gia-dinh",
   "chinh-kich",
+  "gia-dinh",
+  "gia-tuong",
+  "lich-su",
+  "kinh-di",
+  "phim-nhac",
   "bi-an",
-  "hoc-duong",
-  "kinh-dien",
+  "lang-man",
+  "khoa-hoc-vien-tuong",
+  "gay-can",
+  "chien-tranh",
+  "tam-ly",
+  "tinh-cam",
+  "co-trang",
+  "mien-tay",
   "phim-18",
-  "short-drama",
 ] as const;
 
 /**
@@ -36,30 +35,33 @@ export type MovieCategorySlug = (typeof MOVIE_CATEGORY_SLUGS)[number];
 /**
  * Movie category labels (Vietnamese)
  */
-export const MOVIE_CATEGORY_LABELS: Record<MovieCategorySlug, string> = {
+export const MOVIE_CATEGORY_LABELS: Record<string, string> = {
   "hanh-dong": "Hành Động",
-  "tinh-cam": "Tình Cảm",
-  "hai-huoc": "Hài Hước",
-  "co-trang": "Cổ Trang",
-  "tam-ly": "Tâm Lý",
-  "hinh-su": "Hình Sự",
-  "chien-tranh": "Chiến Tranh",
-  "the-thao": "Thể Thao",
-  "vo-thuat": "Võ Thuật",
-  "vien-tuong": "Viễn Tưởng",
   "phieu-luu": "Phiêu Lưu",
-  "khoa-hoc": "Khoa Học",
-  "kinh-di": "Kinh Dị",
-  "am-nhac": "Âm Nhạc",
-  "than-thoai": "Thần Thoại",
+  "hoat-hinh": "Hoạt Hình",
+  "phim-hai": "Hài",
+  "hai-huoc": "Hài Hước",
+  "hinh-su": "Hình Sự",
   "tai-lieu": "Tài Liệu",
+  "chinh-kich": "Chính Kịch",
   "gia-dinh": "Gia Đình",
-  "chinh-kich": "Chính kịch",
-  "bi-an": "Bí ẩn",
-  "hoc-duong": "Học Đường",
-  "kinh-dien": "Kinh Điển",
+  "gia-tuong": "Giả Tưởng",
+  "lich-su": "Lịch Sử",
+  "kinh-di": "Kinh Dị",
+  "phim-nhac": "Nhạc",
+  "am-nhac": "Âm Nhạc",
+  "bi-an": "Bí Ẩn",
+  "lang-man": "Lãng Mạn",
+  "khoa-hoc-vien-tuong": "Khoa Học Viễn Tưởng",
+  "khoa-hoc": "Khoa Học",
+  "vien-tuong": "Viễn Tưởng",
+  "gay-can": "Gây Cấn",
+  "chien-tranh": "Chiến Tranh",
+  "tam-ly": "Tâm Lý",
+  "tinh-cam": "Tình Cảm",
+  "co-trang": "Cổ Trang",
+  "mien-tay": "Miền Tây",
   "phim-18": "Phim 18+",
-  "short-drama": "Short Drama",
 };
 
 /**
@@ -75,65 +77,38 @@ export function isValidMovieCategorySlug(
  * Popular country slugs - subset for navigation menu
  */
 export const POPULAR_COUNTRY_SLUGS = [
+  "au-my",
   "han-quoc",
   "trung-quoc",
   "nhat-ban",
   "thai-lan",
-  "au-my",
   "viet-nam",
+  "hong-kong",
+  "anh",
 ] as const;
 
 export type PopularCountrySlug = (typeof POPULAR_COUNTRY_SLUGS)[number];
 
 /**
- * All country slugs from API
+ * All country slugs from phim.nguonc.com API
  */
 export const COUNTRY_SLUGS = [
+  "au-my",
+  "anh",
   "trung-quoc",
+  "indonesia",
+  "viet-nam",
+  "phap",
+  "hong-kong",
   "han-quoc",
   "nhat-ban",
   "thai-lan",
-  "au-my",
   "dai-loan",
-  "hong-kong",
-  "an-do",
-  "anh",
-  "phap",
-  "canada",
-  "quoc-gia-khac",
-  "duc",
-  "tay-ban-nha",
-  "tho-nhi-ky",
-  "ha-lan",
-  "indonesia",
   "nga",
-  "mexico",
-  "ba-lan",
-  "uc",
-  "thuy-dien",
-  "malaysia",
-  "brazil",
+  "ha-lan",
   "philippines",
-  "bo-dao-nha",
-  "y",
-  "dan-mach",
-  "uae",
-  "na-uy",
-  "thuy-si",
-  "chau-phi",
-  "nam-phi",
-  "ukraina",
-  "a-rap-xe-ut",
-  "bi",
-  "ireland",
-  "colombia",
-  "phan-lan",
-  "viet-nam",
-  "chile",
-  "hy-lap",
-  "nigeria",
-  "argentina",
-  "singapore",
+  "an-do",
+  "quoc-gia-khac",
 ] as const;
 
 export type CountrySlug = (typeof COUNTRY_SLUGS)[number];
@@ -141,52 +116,23 @@ export type CountrySlug = (typeof COUNTRY_SLUGS)[number];
 /**
  * Country labels (Vietnamese)
  */
-export const COUNTRY_LABELS: Record<CountrySlug, string> = {
+export const COUNTRY_LABELS: Record<string, string> = {
+  "au-my": "Âu Mỹ",
+  "anh": "Anh",
   "trung-quoc": "Trung Quốc",
+  "indonesia": "Indonesia",
+  "viet-nam": "Việt Nam",
+  "phap": "Pháp",
+  "hong-kong": "Hồng Kông",
   "han-quoc": "Hàn Quốc",
   "nhat-ban": "Nhật Bản",
   "thai-lan": "Thái Lan",
-  "au-my": "Âu Mỹ",
   "dai-loan": "Đài Loan",
-  "hong-kong": "Hồng Kông",
-  "an-do": "Ấn Độ",
-  anh: "Anh",
-  phap: "Pháp",
-  canada: "Canada",
-  "quoc-gia-khac": "Quốc Gia Khác",
-  duc: "Đức",
-  "tay-ban-nha": "Tây Ban Nha",
-  "tho-nhi-ky": "Thổ Nhĩ Kỳ",
+  "nga": "Nga",
   "ha-lan": "Hà Lan",
-  indonesia: "Indonesia",
-  nga: "Nga",
-  mexico: "Mexico",
-  "ba-lan": "Ba lan",
-  uc: "Úc",
-  "thuy-dien": "Thụy Điển",
-  malaysia: "Malaysia",
-  brazil: "Brazil",
-  philippines: "Philippines",
-  "bo-dao-nha": "Bồ Đào Nha",
-  y: "Ý",
-  "dan-mach": "Đan Mạch",
-  uae: "UAE",
-  "na-uy": "Na Uy",
-  "thuy-si": "Thụy Sĩ",
-  "chau-phi": "Châu Phi",
-  "nam-phi": "Nam Phi",
-  ukraina: "Ukraina",
-  "a-rap-xe-ut": "Ả Rập Xê Út",
-  bi: "Bỉ",
-  ireland: "Ireland",
-  colombia: "Colombia",
-  "phan-lan": "Phần Lan",
-  "viet-nam": "Việt Nam",
-  chile: "Chile",
-  "hy-lap": "Hy Lạp",
-  nigeria: "Nigeria",
-  argentina: "Argentina",
-  singapore: "Singapore",
+  "philippines": "Philippines",
+  "an-do": "Ấn Độ",
+  "quoc-gia-khac": "Quốc gia khác",
 };
 
 export const LISTING_SORT_OPTIONS = [
@@ -215,41 +161,17 @@ export const LIST_MOVIES_TYPE = [
     label: "Phim Bộ",
   },
   {
-    value: "phim-chieu-rap",
-    label: "Phim Chiếu Rạp",
+    value: "tv-shows",
+    label: "TV Shows",
   },
   {
-    value: "tv-shows",
-    label: "Shows",
+    value: "dang-chieu",
+    label: "Đang Chiếu",
   },
   {
     value: "hoat-hinh",
     label: "Hoạt Hình",
   },
-  {
-    value: "phim-vietsub",
-    label: "Phim Vietsub",
-  },
-  {
-    value: "phim-thuyet-minh",
-    label: "Phim Thuyết Minh",
-  },
-  {
-    value: "phim-long-tien",
-    label: "Phim Lồng Tiếng",
-  },
-  {
-    value: "phim-bo-dang-chieu",
-    label: "Phim Bộ Đang Chiếu",
-  },
-  {
-    value: "phim-bo-hoan-thanh",
-    label: "Phim Bộ Hoàn Thành",
-  },
-  {
-    value: "phim-sap-chieu",
-    label: "Phim Sắp Chiếu",
-  }
 ] as const;
 
 export type ListMoviesTypeValue = (typeof LIST_MOVIES_TYPE)[number];
