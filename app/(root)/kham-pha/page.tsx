@@ -15,7 +15,7 @@ export const metadata = {
 export default async function DiscoverPage() {
   const [trendingMovies, topRatedMovies, categories, countries, years] = await Promise.all([
     getTrendingMovies("day"),
-    getTopRatedMovies(6),
+    getTopRatedMovies(5),
     getCategories(),
     getCountries(),
     getYears(),
@@ -57,8 +57,8 @@ export default async function DiscoverPage() {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6">
-            {trendingMovies.slice(0, 6).map((item) =>
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+            {trendingMovies.slice(0, 5).map((item) =>
               item.movieData ? (
                 <MovieCard key={item.movieSlug} movie={item.movieData} />
               ) : null,
@@ -76,7 +76,7 @@ export default async function DiscoverPage() {
             </p>
           </div>
 
-          <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6">
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
             {topRatedMovies.map((item) =>
               item.movieData ? (
                 <MovieCard key={item.movieSlug} movie={item.movieData} />
