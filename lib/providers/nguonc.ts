@@ -442,18 +442,34 @@ function normalizeMovieDetail(value: unknown): MovieDetail | null {
   };
 }
 
-function normalizePagination(value: NguoncListResponse["paginate"]): Pagination | null {
+const PAGE_CHUNK_SIZE = 5;
+
+function normalizePagination(
+  value: NguoncListResponse["paginate"] | undefined | null,
+  clientPage = 1,
+  chunkSize = PAGE_CHUNK_SIZE
+): Pagination | null {
   if (!value) return null;
 
+  const totalItems = normalizeNumber(value.total_items, 0);
+  const backendItemsPerPage = normalizeNumber(value.items_per_page, 10);
+  const totalItemsPerPage = backendItemsPerPage * chunkSize;
+  const backendTotalPages = normalizeNumber(value.total_page, 1);
+
+  const totalPages =
+    totalItems > 0
+      ? Math.ceil(totalItems / totalItemsPerPage)
+      : Math.max(1, Math.ceil(backendTotalPages / chunkSize));
+
   return {
-    totalItems: normalizeNumber(value.total_items),
-    totalItemsPerPage: normalizeNumber(value.items_per_page, 10),
-    currentPage: normalizeNumber(value.current_page, 1),
-    totalPages: normalizeNumber(value.total_page, 1),
+    totalItems,
+    totalItemsPerPage,
+    currentPage: clientPage,
+    totalPages,
   };
 }
 
-async function fetchMovieList(path: string, page = 1) {
+async function fetchSinglePage(path: string, page: number) {
   try {
     const separator = path.includes("?") ? "&" : "?";
     const url = `${normalizeBaseUrl(NGUONC_BASE_URL)}${path}${separator}page=${page}`;
@@ -462,11 +478,11 @@ async function fetchMovieList(path: string, page = 1) {
       next: { revalidate: MOVIE_LIST_REVALIDATE },
     });
 
-    if (res.status === 404) return { items: [], pagination: null };
+    if (res.status === 404 || res.status === 422) return { items: [], paginate: null };
     if (!res.ok) throw new Error(`Failed to fetch movies: ${res.status}`);
 
     const data = (await res.json()) as NguoncListResponse;
-    if (!isSuccess(data.status)) return { items: [], pagination: null };
+    if (!isSuccess(data.status)) return { items: [], paginate: null };
 
     const items = Array.isArray(data.items)
       ? data.items.map(normalizeMovie).filter((item): item is Movie => Boolean(item))
@@ -474,7 +490,50 @@ async function fetchMovieList(path: string, page = 1) {
 
     return {
       items,
-      pagination: normalizePagination(data.paginate),
+      paginate: data.paginate,
+    };
+  } catch (error) {
+    console.error(`phim.nguonc.com single page error for "${path}" page ${page}:`, error);
+    return { items: [], paginate: null };
+  }
+}
+
+async function fetchMovieList(path: string, page = 1) {
+  const safeClientPage = Math.max(1, Math.floor(page) || 1);
+  const startBackendPage = (safeClientPage - 1) * PAGE_CHUNK_SIZE + 1;
+  const backendPages = Array.from(
+    { length: PAGE_CHUNK_SIZE },
+    (_, i) => startBackendPage + i
+  );
+
+  try {
+    const responses = await Promise.all(
+      backendPages.map((backendPage) => fetchSinglePage(path, backendPage))
+    );
+
+    const rawItems: Movie[] = [];
+    let latestPaginate: NguoncListResponse["paginate"] | null = null;
+
+    for (const res of responses) {
+      if (res.items.length > 0) {
+        rawItems.push(...res.items);
+      }
+      if (res.paginate) {
+        latestPaginate = res.paginate;
+      }
+    }
+
+    // Deduplicate by slug to ensure clean list
+    const seenSlugs = new Set<string>();
+    const items = rawItems.filter((movie) => {
+      if (!movie.slug || seenSlugs.has(movie.slug)) return false;
+      seenSlugs.add(movie.slug);
+      return true;
+    });
+
+    return {
+      items,
+      pagination: normalizePagination(latestPaginate, safeClientPage, PAGE_CHUNK_SIZE),
     };
   } catch (error) {
     console.error(`phim.nguonc.com list error for "${path}":`, error);
